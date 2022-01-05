@@ -28,12 +28,44 @@ class WebScraping:
             articleDesc.append(article['description'])
         return articleDesc
 
+def getNumInstances(text):
+    doc = nlp(text)
+
+    numInstDictNoun = {}
+    for chunk in doc.noun_chunks:
+        try:
+            numInstDictNoun[chunk.text] += 1
+        except:
+            numInstDictNoun[chunk.text] = 1
+
+    numInstDictVerb = {}
+    for token in doc:
+        if token.pos_ == "VERB":
+            try:
+                numInstDictVerb[token] += 1
+            except:
+                numInstDictVerb[token] = 1
+    
+    numInstDictPerson = {}
+    for entity in doc.ents:
+        if entity.label_ == "PERSON":
+            try:
+                numInstDictPerson[entity.text] += 1
+            except:
+                numInstDictPerson[entity.text] = 1
+
+    return numInstDictNoun, numInstDictVerb, numInstDictPerson
+
+
 if __name__ == "__main__":
     newInstance = WebScraping()
     titles, desc = newInstance.getTitlesAndDesriptions()
-    text = titles[1]
-    doc = nlp(text)
+    firstArt = titles[0] + desc[0]
+    secondArt = titles[1] + desc[1]
 
-    for entity in doc.ents:
-        print(entity.text, entity.label_)
+    firstNoun, firstVerb, firstPerson = getNumInstances(firstArt)
+    secNoun, secVerb, secPerson = getNumInstances(secondArt)
+
+    print(secNoun)
+
     
