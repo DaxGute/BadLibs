@@ -117,7 +117,7 @@ if __name__ == "__main__":
     articles = []
     for i in range(len(titles)):
         articles.append(Article(titles[i], desc[i]))
+        print(titles[i])
+        print(articles[i].Verbs)
 
-    print(titles[0])
-    print(articles[0].Persons)
     
