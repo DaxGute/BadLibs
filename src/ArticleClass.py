@@ -57,6 +57,9 @@ class Article:
         print("     Nouns   : " + str(self.Nouns))
         print("     Verbs   : " + str(self.Verbs))
         print("     People  : " + str(self.Persons))
+        print("TitleNouns   : " + str(self.titleNouns))
+        print("TitleVerbs   : " + str(self.titleVerbs))
+        print("TitlePeople  : " + str(self.titlePersons))
         print("================================")
         return ""
 
@@ -202,11 +205,11 @@ class Article:
     @staticmethod
     def combineNounArticlesTitle(article1, article2):
         title = article1.title
-        if len(article1.Nouns) < 1 or len(article2.Nouns) < 1:
+        if len(article1.titleNouns) < 1 or len(article2.Nouns) < 1:
             return "Not enough nouns mentioned in both articles."
         noun1 = article1.titleNouns[0]
         noun2 = article2.Nouns[0]
-        for i in range(len(title)-len(noun1)):
+        for i in range(len(title)-len(noun1)+1):
             possibleNoun = title[i: i+len(noun1)]
             if possibleNoun.lower() == noun1.lower():
                 newArticleTitle = title[:i] + noun2 + title[i+len(noun1):]
@@ -217,11 +220,11 @@ class Article:
     @staticmethod
     def combineVerbArticlesTitle(article1, article2):
         title = article1.title
-        if len(article1.Verbs) < 1 or len(article2.Verbs) < 1:
+        if len(article1.titleVerbs) < 1 or len(article2.Verbs) < 1:
             return "Not enough verbs mentioned in both articles."
         verb1 = article1.titleVerbs[0]
         verb2 = article2.Verbs[0]
-        for i in range(len(title)-len(verb1)):
+        for i in range(len(title)-len(verb1)+1):
             possibleNoun = title[i: i+len(verb1)]
             if possibleNoun.lower() == verb1:
                 newArticleTitle = title[:i] + verb2 + title[i+len(verb1):]
@@ -232,11 +235,11 @@ class Article:
     @staticmethod
     def combinePersonsArticlesTitle(article1, article2):
         title = article1.title
-        if len(article1.Persons) < 1 or len(article2.Persons) < 1:
+        if len(article1.titlePersons) < 1 or len(article2.Persons) < 1:
             return "Not enough people mentioned in both articles."
         person1 = article1.titlePersons[0]
         person2 = article2.Persons[0]
-        for i in range(len(title)-len(person1)):
+        for i in range(len(title)-len(person1)+1):
             possibleNoun = title[i: i+len(person1)]
             if possibleNoun.lower() == person1.lower():
                 newArticleTitle = title[:i] + person2 + title[i+len(person1):]
