@@ -28,25 +28,52 @@ def getVerbSentiments():
 
 verbsSenti = getVerbSentiments()
 
+
+
+
 class Article:
     def __init__(self, title, description):
-        text = self.combineText(title, description)
-        self.doc = nlp(text)
+        hyphenIndex = -1
+        for char in range(len(title)):
+            if title[char] == '-':
+                hyphenIndex = char
+                        
+        self.publisher = title[hyphenIndex+1:]
+        title = title[:hyphenIndex-1]
 
-        self.Persons= self.getPersons()    
-        self.Nouns= self.getNouns()
-        self.Verbs= self.getVerbs()
+        self.getDoc(title, description)
+        self.title = title
+        self.Persons = self.getPersons(self.doc)
+        self.Nouns = self.getNouns(self.doc)
+        self.Verbs = self.getVerbs(self.doc)
+        doc = nlp(title)
+        self.titlePersons = self.getPersons(doc)
+        self.titleNouns = self.getNouns(doc)
+        self.titleVerbs = self.getVerbs(doc)
+    
+    def __str__(self):
+        print("================================")
+        print("Article Title: " + self.title)
+        print("     Nouns   : " + str(self.Nouns))
+        print("     Verbs   : " + str(self.Verbs))
+        print("     People  : " + str(self.Persons))
+        print("================================")
+        return ""
 
-    def combineText(self, title, description):
-        return title + ". " + description
+    def getDoc(self, title, description):
+        if description != None:
+            combinedText = title + ". " + description
+        else:
+            combinedText = title
+        self.doc = nlp(combinedText)
 
-    def getNouns(self): # do it based on how common the shared word is 
+    def getNouns(self, doc): # do it based on how common the shared word is 
         numInstDictNoun = {}
-        for chunk in self.doc.noun_chunks: #do prepoccessing to get rid of the news station
+        for chunk in doc.noun_chunks: #do prepoccessing to get rid of the news station
             if chunk.text not in self.Persons:
                 text = chunk.text
                 for person in numInstDictNoun.keys():
-                    if self.getPersonSimilarity(person.lower(), str(chunk.text.lower())):
+                    if Article.getNounSimilarity(person.lower(), str(chunk.text.lower())):
                         text = person
 
                 calculatedInc = 1
@@ -55,6 +82,8 @@ class Article:
                 for i in text.split(" "):
                     if i not in top1000:
                         calculatedInc += 0.25
+                if chunk.text in self.title:
+                    calculatedInc += 0.5
 
                 try:
                     numInstDictNoun[str(text)] += calculatedInc
@@ -63,43 +92,53 @@ class Article:
 
         return Article.dictToList(numInstDictNoun)
 
-    def getNounSimilarity(self, noun1, noun2):
+    @staticmethod
+    def getNounSimilarity(noun1, noun2):
         firstNoun = noun1.split(" ")
         secondNoun = noun2.split(" ")
-        if len(firstNoun) >= 2 and len(secondNoun) >= 2:
-            for i in range(len(firstNoun)-1):
-                firstname = firstNoun[i] + " " + firstNoun[i+1]
-                for i in range(len(secondNoun)-1):
-                    secondname = secondNoun[i] + " " + secondNoun[i+1]
-                    if secondname == firstname and firstname[0] not in top100 and firstname[1] not in top100:
-                        return True
+        numCounts = 0
+        for i in range(len(firstNoun)):
+            firstnoun = firstNoun[i]
+            for i in range(len(secondNoun)):
+                secondnoun = secondNoun[i]
+                if secondnoun == firstnoun and firstnoun:
+                    numCounts += 1
         
-        return 0
+        if numCounts >= 2:
+            return True
+        return False
 
-    def getVerbs(self): # do it based on the sentiment
+    def getVerbs(self, doc): # do it based on the sentiment
         numInstDictVerb = {}
-        for token in self.doc:
+        for token in doc:
             if token.pos_ == "VERB":
                 text = str(token).lower()
 
                 calculatedInc = 1
                 if text in verbsSenti:
-                    calculatedInc += abs(verbsSenti[text] * 10)
+                    calculatedInc += abs(verbsSenti[text] * 5)
+                if text not in top100:
+                    if text not in top1000:
+                        calculatedInc += 1
+                    else:
+                        calculatedInc = 0.25
+                else:
+                    calculatedInc = 0
 
                 try:
-                    numInstDictVerb[str(token)] += calculatedInc
+                    numInstDictVerb[text] += calculatedInc
                 except:
-                    numInstDictVerb[str(token)] = calculatedInc
+                    numInstDictVerb[text] = calculatedInc
 
         return Article.dictToList(numInstDictVerb)
 
-    def getPersons(self): # do it based on how much it has in common
+    def getPersons(self, doc): # do it based on how much it has in common
         numInstDictPerson = {}
-        for entity in self.doc.ents:
+        for entity in doc.ents:
             if entity.label_ == "PERSON":
                 text = entity.text
                 for person in numInstDictPerson.keys():
-                    if self.getPersonSimilarity(person, str(entity.text)):
+                    if Article.getPersonSimilarity(person, str(entity.text)):
                         text = person
                 
                 try:
@@ -109,7 +148,8 @@ class Article:
 
         return Article.dictToList(numInstDictPerson)
 
-    def getPersonSimilarity(self, name1, name2):
+    @staticmethod
+    def getPersonSimilarity(name1, name2):
         firstName = name1.split(" ")
         secondName = name2.split(" ")
         if len(firstName) >= 2 and len(secondName) >= 2:
@@ -158,5 +198,53 @@ class Article:
                 arr[k] = R[j]
                 j += 1
                 k += 1
+    
+    @staticmethod
+    def combineNounArticlesTitle(article1, article2):
+        title = article1.title
+        if len(article1.Nouns) < 1 or len(article2.Nouns) < 1:
+            return "Not enough nouns mentioned in both articles."
+        noun1 = article1.titleNouns[0]
+        noun2 = article2.Nouns[0]
+        for i in range(len(title)-len(noun1)):
+            possibleNoun = title[i: i+len(noun1)]
+            if possibleNoun.lower() == noun1.lower():
+                newArticleTitle = title[:i] + noun2 + title[i+len(noun1):]
+                return newArticleTitle
         
+        return "I am stupid"
+    
+    @staticmethod
+    def combineVerbArticlesTitle(article1, article2):
+        title = article1.title
+        if len(article1.Verbs) < 1 or len(article2.Verbs) < 1:
+            return "Not enough verbs mentioned in both articles."
+        verb1 = article1.titleVerbs[0]
+        verb2 = article2.Verbs[0]
+        for i in range(len(title)-len(verb1)):
+            possibleNoun = title[i: i+len(verb1)]
+            if possibleNoun.lower() == verb1:
+                newArticleTitle = title[:i] + verb2 + title[i+len(verb1):]
+                return newArticleTitle
+    
+        return "I am stupid"
+
+    @staticmethod
+    def combinePersonsArticlesTitle(article1, article2):
+        title = article1.title
+        if len(article1.Persons) < 1 or len(article2.Persons) < 1:
+            return "Not enough people mentioned in both articles."
+        person1 = article1.titlePersons[0]
+        person2 = article2.Persons[0]
+        for i in range(len(title)-len(person1)):
+            possibleNoun = title[i: i+len(person1)]
+            if possibleNoun.lower() == person1.lower():
+                newArticleTitle = title[:i] + person2 + title[i+len(person1):]
+                return newArticleTitle
+        
+        return "I am stupid"
+
+
+    
+
 

@@ -1,7 +1,7 @@
 import newsAPI
-import json
 import spacy
 from ArticleClass import Article
+import random
 nlp = spacy.load("en_core_web_sm")
 
 
@@ -117,7 +117,16 @@ if __name__ == "__main__":
     articles = []
     for i in range(len(titles)):
         articles.append(Article(titles[i], desc[i]))
-        print(titles[i])
-        print(articles[i].Verbs)
+    
+    randomArticle1 = random.choice(articles)
+    randomArticle2 = random.choice(articles)
+    print(randomArticle1)
+    print(randomArticle2)
+    
+    print("Noun Art     : " + Article.combineNounArticlesTitle(randomArticle1, randomArticle2))
+    print("Verb Art     : " + Article.combineVerbArticlesTitle(randomArticle1, randomArticle2))
+    print("Persons Art  : " + Article.combinePersonsArticlesTitle(randomArticle1, randomArticle2))
+
+
 
     
