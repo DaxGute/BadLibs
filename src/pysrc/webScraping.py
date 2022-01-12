@@ -58,14 +58,7 @@ def getNumInstances(text):
                 numInstDictPerson[str(entity.text)] = 1
 
     return numInstDictNoun, numInstDictVerb, numInstDictPerson
-
-def replacePerson():
-    pass
-def replaceVerb():
-    pass
-def replaceNoun():
-    pass
-
+    
 # def binarySearch(x, arr):
 #     if (x == "it"):
 #         print("________" + str(len(arr)) + x)
