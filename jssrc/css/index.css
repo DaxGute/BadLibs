@@ -13,6 +13,7 @@
 
 #Noun {
   background-color: #eb9aa7;
+  color: #363636;
   border-radius: 25px 0px 0px 25px;
 }
 #Noun:hover {
@@ -20,6 +21,7 @@
 }
 #Verb {
   background-color: #9aeba5;
+  color: #363636;
   border-radius: 0px;
 }
 #Verb:hover {
@@ -27,6 +29,7 @@
 }
 #Person {
   background-color: #9a9feb;
+  color: #363636;
   border-radius: 0px 25px 25px 0px;
 }
 #Person:hover {
