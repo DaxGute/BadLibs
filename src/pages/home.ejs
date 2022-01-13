@@ -13,13 +13,13 @@
         <div class="fade-out" id = "choiceBox" style="position: fixed; top: 15%; left: 15%; border-radius: 25px; background: #FFFFE3; padding: 20px; border: 2px solid #73AD21; width: 70%; height:70%;"> 
             <h1 style="text-align: center;"> Thats not quite right... </h1>
             <div style="background-color: #f6fafa; border: 2px solid #73AD21; border-radius: 5px; box-shadow: 0px 0px 5px 2px #73AD21;">
-                <h3 style="padding: 30px; color: #2e2e2e;"> Title goes here</h3>
+                <h3 style="padding: 30px; color: #2e2e2e;" id="newTitle"> Loading... </h3>
             </div>
 
             <table style="width: 100%; height: 30%; color: #7a7a7a;">
                 <tr>
-                    <th> One Article </th>
-                    <th> Other Article </th>
+                    <th id="firstArt"> One Article </th>
+                    <th id="secArt"> Other Article </th>
                 </tr>
             </table>
             
@@ -65,6 +65,6 @@
         
 
     </body>
-    <script src="/socket.io/socket.io.js" ></script> <!--  todo: add a get script script -->
-    <script module src="../javascript/home.js"></script>
+    <script src="/socket.io/socket.io.js" ></script>
+    <script type="module" src="../javascript/home.js"></script>
 </html>

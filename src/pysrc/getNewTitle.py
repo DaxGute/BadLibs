@@ -12,9 +12,6 @@ for i in range(len(titles)):
 
 randomArticle1 = random.choice(articles)
 randomArticle2 = random.choice(articles)
-print(randomArticle1.title)
-print(randomArticle2.title)
-
-print(Article.combineNounArticlesTitle(randomArticle1, randomArticle2))
+print(randomArticle1.title + "|" + randomArticle2.title + "|" + Article.combineNounArticlesTitle(randomArticle1, randomArticle2))
 
 sys.stdout.flush()

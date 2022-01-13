@@ -3,15 +3,19 @@ canvas.width = window.innerWidth
 canvas.height = window.innerHeight
 var ctx = canvas.getContext('2d')
 
+const socket = io()
+
+socket.on('getArticle', message => {
+    var titleArray = message.split('|')
+
+    document.getElementById('secArt').innerHTML = titleArray[0]
+    document.getElementById('firstArt').innerHTML = titleArray[1]
+    document.getElementById('newTitle').innerHTML = titleArray[2]
+})
+
 
 canvasAnimationFrames()
 updateBox()
-
-// var userLoggedIn = false
-// socket.on('loggedIn', () => {
-//     userLoggedIn = true
-//     console.log("logged in")
-// })
 
 function updateBox(){
    
