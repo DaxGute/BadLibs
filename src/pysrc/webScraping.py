@@ -109,16 +109,18 @@ if __name__ == "__main__":
 
     articles = []
     for i in range(len(titles)):
+        print(titles[i])
         articles.append(Article(titles[i], desc[i]))
+        print(articles[i])
     
     randomArticle1 = random.choice(articles)
     randomArticle2 = random.choice(articles)
-    print(randomArticle1)
-    print(randomArticle2)
+    # print(randomArticle1)
+    # print(randomArticle2)
     
-    print("Noun Art     : " + Article.combineNounArticlesTitle(randomArticle1, randomArticle2))
-    print("Verb Art     : " + Article.combineVerbArticlesTitle(randomArticle1, randomArticle2))
-    print("Persons Art  : " + Article.combinePersonsArticlesTitle(randomArticle1, randomArticle2))
+    # print("Noun Art     : " + Article.combineNounArticlesTitle(randomArticle1, randomArticle2))
+    # print("Verb Art     : " + Article.combineVerbArticlesTitle(randomArticle1, randomArticle2))
+    # print("Persons Art  : " + Article.combinePersonsArticlesTitle(randomArticle1, randomArticle2))
 
 
 

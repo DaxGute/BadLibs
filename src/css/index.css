@@ -1,7 +1,7 @@
 .choiceButt {
   display:inline-block;
   width: 30%;
-  height: 10%;
+  height: 50px;
   padding: 0px;
   border: 0px;
   margin:0px;
@@ -14,26 +14,29 @@
 #Noun {
   background-color: #eb9aa7;
   color: #363636;
+  font-size: 15px;
   border-radius: 25px 0px 0px 25px;
 }
 #Noun:hover {
   background-color: #e04f67;
 }
 #Verb {
-  background-color: #9aeba5;
+  background-color: #454546;
   color: #363636;
+  font-size: 15px;
   border-radius: 0px;
 }
 #Verb:hover {
-  background-color: #43d868;
+  background-color: #484849;
 }
 #Person {
-  background-color: #9a9feb;
+  background-color: #454546;
   color: #363636;
+  font-size: 15px;
   border-radius: 0px 25px 25px 0px;
 }
 #Person:hover {
-  background-color: #4244db;
+  background-color: #484849;
 }
 
 

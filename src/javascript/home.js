@@ -5,8 +5,15 @@ var ctx = canvas.getContext('2d')
 
 const socket = io()
 
+document.getElementById('Noun').addEventListener('click', () => {
+    socket.emit('anotherArticle')
+    document.getElementById('secArt').innerHTML = "..."
+    document.getElementById('firstArt').innerHTML = "..."
+    document.getElementById('newTitle').innerHTML = "Loading..."
+
+})
 socket.on('getArticle', message => {
-    var titleArray = message.split('|')
+    var titleArray = message.split('☃')
 
     document.getElementById('secArt').innerHTML = titleArray[0]
     document.getElementById('firstArt').innerHTML = titleArray[1]

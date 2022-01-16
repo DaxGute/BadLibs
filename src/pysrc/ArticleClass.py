@@ -33,23 +33,29 @@ verbsSenti = getVerbSentiments()
 
 class Article:
     def __init__(self, title, description):
+        newTitle = ""
         hyphenIndex = -1
         for char in range(len(title)):
             if title[char] == '-':
-                hyphenIndex = char
-                        
-        self.publisher = title[hyphenIndex+1:]
-        title = title[:hyphenIndex-1]
+                hyphenIndex = char        
+                self.publisher = title[hyphenIndex+2:]
+                newTitle = title[:hyphenIndex-1]
 
-        self.getDoc(title, description)
-        self.title = title
-        self.Persons = self.getPersons(self.doc)
-        self.Nouns = self.getNouns(self.doc)
-        self.Verbs = self.getVerbs(self.doc)
-        doc = nlp(title)
-        self.titlePersons = self.getPersons(doc)
-        self.titleNouns = self.getNouns(doc)
-        self.titleVerbs = self.getVerbs(doc)
+        self.title = newTitle.split("|")[0]
+
+        if description != None:
+            combinedText = newTitle + ". " + description
+        else:
+            combinedText = newTitle
+        self.fullDoc = nlp(combinedText)
+        self.Persons = self.getPersons(self.fullDoc)
+        self.Nouns = self.getNouns(self.fullDoc)
+        self.Verbs = self.getVerbs(self.fullDoc)
+
+        self.titleDoc = nlp(newTitle)
+        self.titlePersons = self.getPersons(self.titleDoc)
+        self.titleNouns = self.getNouns(self.titleDoc)
+        self.titleVerbs = self.getVerbs(self.titleDoc)
     
     def __str__(self):
         print("================================")
@@ -63,40 +69,59 @@ class Article:
         print("================================")
         return ""
 
-    def getDoc(self, title, description):
-        if description != None:
-            combinedText = title + ". " + description
-        else:
-            combinedText = title
-        self.doc = nlp(combinedText)
-
     def getNouns(self, doc): # do it based on how common the shared word is 
+        """
+        First it consolodates the nouns (merges if is duplicate)
+        Provides the rules for how each noun should be ranked ranked:
+            1) If it is similar to another noun, it either takes on that value or it takes on that noun (I should make more clear)
+            2) If the word is greater than 3 words long, it gets points
+            3) If each word is not common it gets points 
+            4) If the phrase is in the title, it gets points
+        """
         numInstDictNoun = {}
-        for chunk in doc.noun_chunks: #do prepoccessing to get rid of the news station
-            if chunk.text not in self.Persons:
-                text = chunk.text
-                for person in numInstDictNoun.keys():
-                    if Article.getNounSimilarity(person.lower(), str(chunk.text.lower())):
-                        text = person
+        for chunk in doc.noun_chunks:
+            currNoun = str(chunk.text).lower()
+            calculatedInc = 1
+            if str(chunk.text) == self.publisher:
+                continue
 
-                calculatedInc = 1
-                if len(text) >= 3:
-                    calculatedInc += 0.5
-                for i in text.split(" "):
-                    if i not in top1000:
-                        calculatedInc += 0.25
-                if chunk.text in self.title:
-                    calculatedInc += 0.5
+            toBePopped = []
+            for prevNoun in numInstDictNoun.keys(): #checks that there isn't already a similar one
+                prevNoun = prevNoun.lower()
+                if Article.nounsAreSame(prevNoun, currNoun):
 
-                try:
-                    numInstDictNoun[str(text)] += calculatedInc
-                except:
-                    numInstDictNoun[str(text)] = calculatedInc
+                    if len(currNoun) > len(prevNoun): #this way it always is the largest string
+                        calculatedInc += 1 + numInstDictNoun[prevNoun]
+                        toBePopped.append(prevNoun)
+                    else:
+                        currNoun = prevNoun
+
+            for dictKey in toBePopped:
+                numInstDictNoun.pop(dictKey)
+       
+            indivWords = currNoun.split(' ')
+            if len(indivWords) >= 3:
+                calculatedInc += 0.5
+            for i in indivWords:
+                if i not in top1000:
+                    calculatedInc += 0.25
+                    if i in self.title: # is this really neceassary for both nouns and title nouns
+                        calculatedInc += 0.5
+
+            try:
+                numInstDictNoun[str(currNoun)] += calculatedInc
+            except:
+                numInstDictNoun[str(currNoun)] = calculatedInc
 
         return Article.dictToList(numInstDictNoun)
 
+
+
     @staticmethod
-    def getNounSimilarity(noun1, noun2):
+    def nounsAreSame(noun1, noun2):
+        if noun1 == noun2:  #if they are the same then obviously they are the same
+            return True
+
         firstNoun = noun1.split(" ")
         secondNoun = noun2.split(" ")
         numCounts = 0
@@ -104,10 +129,10 @@ class Article:
             firstnoun = firstNoun[i]
             for i in range(len(secondNoun)):
                 secondnoun = secondNoun[i]
-                if secondnoun == firstnoun and firstnoun:
+                if secondnoun == firstnoun and firstnoun not in top100:
                     numCounts += 1
         
-        if numCounts >= 2:
+        if numCounts >= 2: # if they have more than two words in common that aren't super common
             return True
         return False
 

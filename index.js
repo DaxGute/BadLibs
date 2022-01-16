@@ -37,6 +37,13 @@ io.on('connection', socket => {
       dataVar = result.toString()
       socket.emit('getArticle', dataVar)
     });
+    socket.on('anotherArticle', () => {
+      PythonShell.run('./src/pysrc/getNewTitle.py', options, function (err, result){
+        if (err) throw err;
+        dataVar = result.toString()
+        socket.emit('getArticle', dataVar)
+      });
+    })
 })
 
 
