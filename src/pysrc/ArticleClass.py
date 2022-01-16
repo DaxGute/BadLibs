@@ -44,15 +44,15 @@ class Article:
         self.title = newTitle.split("|")[0]
 
         if description != None:
-            combinedText = newTitle + ". " + description
+            combinedText = self.title + ". " + description
         else:
-            combinedText = newTitle
+            combinedText = self.title
         self.fullDoc = nlp(combinedText)
         self.Persons = self.getPersons(self.fullDoc)
         self.Nouns = self.getNouns(self.fullDoc)
         self.Verbs = self.getVerbs(self.fullDoc)
 
-        self.titleDoc = nlp(newTitle)
+        self.titleDoc = nlp(self.title)
         self.titlePersons = self.getPersons(self.titleDoc)
         self.titleNouns = self.getNouns(self.titleDoc)
         self.titleVerbs = self.getVerbs(self.titleDoc)
