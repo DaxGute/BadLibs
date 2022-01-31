@@ -10,11 +10,11 @@ def getLinesOfFile(file):
     f.close()
     return listOfLines
 
-top1000 = getLinesOfFile("top1000.txt")
-top100 = getLinesOfFile("top100.txt")
+top1000 = getLinesOfFile("src/pysrc/top1000.txt")
+top100 = getLinesOfFile("src/pysrc/top100.txt")
 
 def getVerbSentiments():
-    f = open("SentiWords_1.1.txt", "r")
+    f = open("src/pysrc/SentiWords_1.1.txt", "r")
     listOfVerbs = {}
     for line in f:
         if line.find("#v") != -1:
