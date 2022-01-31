@@ -3,7 +3,8 @@ canvas.width = window.innerWidth
 canvas.height = window.innerHeight
 var ctx = canvas.getContext('2d')
 
-const socket = io()
+var socket = io();
+
 
 document.getElementById('Noun').addEventListener('click', () => {
     socket.emit('anotherArticle')
@@ -12,13 +13,13 @@ document.getElementById('Noun').addEventListener('click', () => {
     document.getElementById('newTitle').innerHTML = "Loading..."
 
 })
-socket.on('getArticle', message => {
-    var titleArray = message.split('☃')
+// socket.on('getArticle', message => {
+//     var titleArray = message.split('☃')
 
-    document.getElementById('secArt').innerHTML = titleArray[0]
-    document.getElementById('firstArt').innerHTML = titleArray[1]
-    document.getElementById('newTitle').innerHTML = titleArray[2]
-})
+//     document.getElementById('secArt').innerHTML = titleArray[0]
+//     document.getElementById('firstArt').innerHTML = titleArray[1]
+//     document.getElementById('newTitle').innerHTML = titleArray[2]
+// })
 
 
 canvasAnimationFrames()

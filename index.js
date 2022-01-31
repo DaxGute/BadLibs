@@ -1,28 +1,21 @@
-var http = require("http");
-const socketio = require("socket.io")
-const express = require("express");
+'use strict';
+
+const express = require('express');
+const app = require('express')();
+app.set('view engine', 'pug');
+
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+
 const path = require("path");
-
-const app = express();
-const port =  "8000";
-
 app.use(express.static(path.join(__dirname, './src')))
 
-const server = http.createServer(app) 
-
-server.listen(3000, () => {
-  console.log("Server Running")
-})
-
-const io = socketio(server)
-
-app.set("view engine", "ejs")
-const {PythonShell} =require('python-shell');
-
 app.get('/', (req, res) => {
-  res.render(path.resolve(__dirname + '/src/pages/home'))
+  res.render("home.ejs")
 });
 
+
+const {PythonShell} = require('python-shell');
 
 io.on('connection', socket => {
     let options = {
@@ -45,6 +38,21 @@ io.on('connection', socket => {
       });
     })
 })
+
+// if (module === require.main) {
+//   const PORT = process.env.PORT || 8080;
+//   server.listen(PORT, () => {
+//     console.log(`App listening on port ${PORT}`);
+//     console.log('Press Ctrl+C to quit.');
+//   });
+// }
+
+server.listen(8080, () => {
+  console.log("Server Running")
+})
+// [END appengine_websockets_app]
+
+module.exports = server;
 
 
 
