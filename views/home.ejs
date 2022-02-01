@@ -41,39 +41,19 @@
             </div>
            
         </div>
-    
-        <ul id="messages"></ul>
-        <form action="">
-          <input id="m" autocomplete="off">
-          <button>send </button> 
-        </form>
     </body>
     <script src="/socket.io/socket.io.js" ></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
-        // $(function () {
-        //     var socket = io();
-        //     socket.on('getArticle', message => {
-        //         var titleArray = message.split('☃')
-        //         document.getElementById('secArt').innerHTML = titleArray[0]
-        //         document.getElementById('firstArt').innerHTML = titleArray[1]
-        //         document.getElementById('newTitle').innerHTML = titleArray[2]
-        //     })
-        // };
         $(function () {
             var socket = io();
-            $('form').submit(function(){
-            console.log($('#m').val());
-            socket.emit('chat message', $('#m').val());
-            $('#m').val('');
-            return false;
-            });
-            socket.on('chat message', function(msg){
-            console.log(msg);
-            $('#messages').append($('<li>').text(msg));
-            window.scrollTo(0, document.body.scrollHeight);
-            });
-         });
+            socket.on('getArticle', message => {
+                var titleArray = message.split('☃')
+                document.getElementById('secArt').innerHTML = titleArray[0]
+                document.getElementById('firstArt').innerHTML = titleArray[1]
+                document.getElementById('newTitle').innerHTML = titleArray[2]
+            })
+        })
     </script>
-    <!-- <script type="module" src="/javascript/home.js"></script> -->
+    <script type="module" src="/javascript/home.js"></script>
 </html>
