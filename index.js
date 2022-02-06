@@ -15,21 +15,12 @@ app.get('/', (req, res) => {
   res.render('home.ejs');
 });
 
-const {PythonShell} = require('python-shell');
+const newTitle = require('./src/javascript/getArticle/webScraping');
 io.on('connection', socket => {
-  let options = {
-    mode: 'text',
-    pythonOptions: ['-u'], // get print results in real-time
-    args: [''] //An argument which can be accessed in the script using sys.argv[1]
-  };
-  var dataVar
-  
 
-  PythonShell.run('./src/pysrc/getNewTitle.py', options, function (err, result){
-    if (err) throw err;
-    var dataVar = result.toString()
-    socket.emit('getArticle', dataVar)
-  });
+  var dataVar = newTitle()
+  socket.emit('getArticle', dataVar)
+
   socket.on('anotherArticle', () => {
     PythonShell.run('./src/pysrc/getNewTitle.py', options, function (err, result){
       if (err) throw err;
